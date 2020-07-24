@@ -13,4 +13,6 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
 
     @Query("select e from EmployeeEntity  e  where e.email =:email")
     List<EmployeeEntity> findEmployeesByEmail(@Param("email") String email);
+
+    EmployeeEntity getUserByEmail(@Param("email") String email);
 }

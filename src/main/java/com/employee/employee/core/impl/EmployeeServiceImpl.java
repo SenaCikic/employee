@@ -10,6 +10,8 @@ import com.employee.employee.dao.repository.EmployeeRepository;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +26,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     EmployeeRepository employeeRepository;
     EmployeeMapper employeeMapper;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private String encodePassword(String password){
+        return passwordEncoder.encode(password);
+    }
+
     @Override
     public Employee addEmployee(Employee employee){
         EmployeeEntity newEmployee = new EmployeeEntity();
@@ -34,6 +43,8 @@ public class EmployeeServiceImpl implements EmployeeService {
         newEmployee.setPhone(employee.getPhone());
         newEmployee.setHoursActive(employee.getHoursActive());
         newEmployee.setPassword(employee.getPassword());
+//        newEmployee.setPassword(encodePassword(newEmployee.getPassword()));
+        newEmployee.setAvatar(null);
 
         newEmployee = employeeRepository.save(newEmployee);
 
@@ -70,6 +81,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         entity.setPhone(request.getPhone());
         entity.setId(request.getId());
         entity.setPassword(request.getPassword());
+//        entity.setPassword(encodePassword(request.getPassword()));
 
         return entity;
     }
@@ -111,6 +123,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         return employeeMapper.entityToDto(entity);
     }
+
+
+
 }
 
 

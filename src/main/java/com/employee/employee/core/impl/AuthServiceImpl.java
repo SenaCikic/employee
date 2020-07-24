@@ -17,11 +17,11 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    @Autowired
-    private EmployeeRepository employeeRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    EmployeeRepository employeeRepository;
+
+
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) throws Exception {

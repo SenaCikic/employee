@@ -26,10 +26,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     EmployeeRepository employeeRepository;
     EmployeeMapper employeeMapper;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
-    private String encodePassword(String password){
+    PasswordEncoder passwordEncoder;
+
+    public String encodePassword(String password){
         return passwordEncoder.encode(password);
     }
 

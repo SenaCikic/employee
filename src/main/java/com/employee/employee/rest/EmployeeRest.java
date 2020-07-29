@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
+@CrossOrigin(origins="http://localhost:4200")
 @FieldDefaults(level= AccessLevel.PRIVATE)
 @RestController
 @RequestMapping(value="/employee")

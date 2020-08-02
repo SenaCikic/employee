@@ -1,8 +1,6 @@
 package com.employee.employee.rest;
 
-import com.employee.employee.api.model.ChangePasswordRequest;
-import com.employee.employee.api.model.Employee;
-import com.employee.employee.api.model.EmployeeRequest;
+import com.employee.employee.api.model.*;
 import com.employee.employee.api.service.EmployeeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,11 +14,13 @@ import java.io.IOException;
 import java.util.List;
 
 @AllArgsConstructor
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="http://localhost:4200", allowedHeaders = "*")
+
 @FieldDefaults(level= AccessLevel.PRIVATE)
 @RestController
 @RequestMapping(value="/employee")
 @Api(tags = "employee")
+
 public class EmployeeRest {
 
     EmployeeService employeeService;
@@ -60,9 +60,16 @@ public class EmployeeRest {
     }
 
     @ApiOperation(value = "Upload Avatar")
-    @PostMapping("{id}/avatar")
-    public Employee uploadAvatar(@PathVariable Long id, @RequestBody(required = false) MultipartFile file) throws IOException {
-       return employeeService.uploadAvatar(id, file);
+    @PostMapping("{id}/upload/avatar")
+    public Employee uploadAvatar(@PathVariable Long id, @RequestBody UploadAvatar uploadAvatarrequest){
+       uploadAvatarrequest.setId(id);
+       return employeeService.uploadAvatar(uploadAvatarrequest);
+    }
+
+    @ApiOperation(value = "Get avatar")
+    @GetMapping("{id}/avatar")
+    public DocStore getAvatar(@PathVariable  Long id){
+        return employeeService.getAvatar(id);
     }
 
 }

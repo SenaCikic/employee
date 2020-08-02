@@ -8,12 +8,12 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name="Employee")
+@Table(name="employee")
 public class EmployeeEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "serial")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "first_name")
@@ -29,13 +29,13 @@ public class EmployeeEntity implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "avatar")
-    @Lob
-    private byte[] avatar;
-
     @Column(name = "phone")
     private String phone;
 
     @Column(name = "hours_active")
     private double hoursActive;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="doc_id", referencedColumnName = "id")
+    private DocStoreEntity docStore;
 }

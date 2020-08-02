@@ -1,22 +1,27 @@
 package com.employee.employee.core.impl;
 
-import com.employee.employee.api.model.ChangePasswordRequest;
-import com.employee.employee.api.model.Employee;
-import com.employee.employee.api.model.EmployeeRequest;
+import com.employee.employee.api.model.*;
 import com.employee.employee.api.service.EmployeeService;
+import com.employee.employee.core.mapper.DocStoreMapper;
 import com.employee.employee.core.mapper.EmployeeMapper;
+import com.employee.employee.dao.entity.DocStoreEntity;
 import com.employee.employee.dao.entity.EmployeeEntity;
+import com.employee.employee.dao.repository.DocStoreRepository;
 import com.employee.employee.dao.repository.EmployeeRepository;
+import javassist.NotFoundException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.Doc;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -26,6 +31,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     EmployeeRepository employeeRepository;
     EmployeeMapper employeeMapper;
 
+    DocStoreRepository docStoreRepository;
+    DocStoreMapper docStoreMapper;
 
     PasswordEncoder passwordEncoder;
 
@@ -44,7 +51,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         newEmployee.setHoursActive(employee.getHoursActive());
         newEmployee.setPassword(employee.getPassword());
 //        newEmployee.setPassword(encodePassword(newEmployee.getPassword()));
-        newEmployee.setAvatar(null);
 
         newEmployee = employeeRepository.save(newEmployee);
 
@@ -83,6 +89,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         entity.setPassword(request.getPassword());
 //        entity.setPassword(encodePassword(request.getPassword()));
 
+
         return entity;
     }
 
@@ -110,20 +117,43 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Employee uploadAvatar(Long id, MultipartFile file) throws IOException {
-        EmployeeEntity entity = employeeRepository.findById(id).get();
+    public Employee uploadAvatar(UploadAvatar uploadAvatarRequest) {
 
-        String fileName = file.getOriginalFilename();
-        if(fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")){
-            entity.setAvatar(file.getBytes());
+        EmployeeEntity employeeEntity = employeeRepository.getOne(uploadAvatarRequest.getId());
 
-            entity.setFirstName(entity.getFirstName());
-            entity = employeeRepository.save(entity);
-        } else throw new UnsupportedOperationException("Allowed formats: .jpg .jpeg .png");
+        if(employeeEntity.getDocStore() == null) {
 
-        return employeeMapper.entityToDto(entity);
+            DocStoreEntity newDocStore = new DocStoreEntity();
+
+            newDocStore.setId(uploadAvatarRequest.getId());
+            newDocStore.setExtension(uploadAvatarRequest.getExtension());
+            newDocStore.setFile(uploadAvatarRequest.getFile());
+            newDocStore.setFileName(uploadAvatarRequest.getFileName());
+            newDocStore.setMimeType(uploadAvatarRequest.getMimeType());
+            newDocStore.setTableName("employee");
+
+            docStoreRepository.save(newDocStore);
+            employeeEntity.setDocStore(newDocStore);
+
+            return employeeMapper.entityToDto(employeeEntity);
+        }
+        else {
+            DocStoreEntity docStoreEntity = employeeEntity.getDocStore();
+            docStoreEntity.setExtension(uploadAvatarRequest.getExtension());
+            docStoreEntity.setFile(uploadAvatarRequest.getFile());
+            docStoreEntity.setFileName(uploadAvatarRequest.getFileName());
+            docStoreEntity.setMimeType(uploadAvatarRequest.getMimeType());
+            docStoreRepository.save(docStoreEntity);
+
+            return employeeMapper.entityToDto(employeeEntity);
+        }
     }
 
+    @Override
+    public DocStore getAvatar(Long id) {
+        DocStoreEntity entity = docStoreRepository.getOne(id);
+        return  docStoreMapper.entityToDto(entity);
+    }
 
 
 }

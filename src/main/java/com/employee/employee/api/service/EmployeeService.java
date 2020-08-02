@@ -1,8 +1,7 @@
 package com.employee.employee.api.service;
 
-import com.employee.employee.api.model.ChangePasswordRequest;
-import com.employee.employee.api.model.Employee;
-import com.employee.employee.api.model.EmployeeRequest;
+import com.employee.employee.api.model.*;
+import javassist.NotFoundException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,5 +23,8 @@ public interface EmployeeService {
 
     Employee changePassword(Long id, ChangePasswordRequest request);
 
-    Employee uploadAvatar(Long id, MultipartFile file) throws IOException;
+    Employee uploadAvatar(UploadAvatar uploadAvatarrequest);
+
+    DocStore getAvatar(Long id);
+
 }

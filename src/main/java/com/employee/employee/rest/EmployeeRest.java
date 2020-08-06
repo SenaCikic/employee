@@ -15,7 +15,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @CrossOrigin(origins="http://localhost:4200", allowedHeaders = "*")
-
 @FieldDefaults(level= AccessLevel.PRIVATE)
 @RestController
 @RequestMapping(value="/employee")

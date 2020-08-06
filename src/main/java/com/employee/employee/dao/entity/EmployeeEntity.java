@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,7 +23,7 @@ public class EmployeeEntity implements Serializable {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     @Email
     private String email;
 
@@ -32,10 +33,13 @@ public class EmployeeEntity implements Serializable {
     @Column(name = "phone")
     private String phone;
 
-    @Column(name = "hours_active")
-    private double hoursActive;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="doc_id", referencedColumnName = "id")
     private DocStoreEntity docStore;
+
+    @Column(name = "role")
+    private String role;
+
+    @OneToMany( mappedBy = "employee")
+    private List<TimeTrackerEntity> timeTracker;
 }

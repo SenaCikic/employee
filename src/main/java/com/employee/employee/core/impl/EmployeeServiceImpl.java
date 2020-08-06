@@ -8,20 +8,12 @@ import com.employee.employee.dao.entity.DocStoreEntity;
 import com.employee.employee.dao.entity.EmployeeEntity;
 import com.employee.employee.dao.repository.DocStoreRepository;
 import com.employee.employee.dao.repository.EmployeeRepository;
-import javassist.NotFoundException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.Doc;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -34,23 +26,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     DocStoreRepository docStoreRepository;
     DocStoreMapper docStoreMapper;
 
-    PasswordEncoder passwordEncoder;
-
-    public String encodePassword(String password){
-        return passwordEncoder.encode(password);
-    }
 
     @Override
     public Employee addEmployee(Employee employee){
         EmployeeEntity newEmployee = new EmployeeEntity();
 
+        newEmployee.setEmail(employee.getEmail());
         newEmployee.setFirstName(employee.getFirstName());
         newEmployee.setLastName(employee.getLastName());
-        newEmployee.setEmail(employee.getEmail());
         newEmployee.setPhone(employee.getPhone());
-        newEmployee.setHoursActive(employee.getHoursActive());
         newEmployee.setPassword(employee.getPassword());
-//        newEmployee.setPassword(encodePassword(newEmployee.getPassword()));
+        newEmployee.setRole(employee.getRole());
+        newEmployee.setDocStore(null);
 
         newEmployee = employeeRepository.save(newEmployee);
 
@@ -87,8 +74,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         entity.setPhone(request.getPhone());
         entity.setId(request.getId());
         entity.setPassword(request.getPassword());
-//        entity.setPassword(encodePassword(request.getPassword()));
-
 
         return entity;
     }
@@ -155,6 +140,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         return  docStoreMapper.entityToDto(entity);
     }
 
+    @Override
+    public Employee login(LoginRequest loginRequest){
+        if( employeeRepository.getUserByEmail(loginRequest.getEmail()) != null ){
+
+            if(employeeRepository.checkPassword(loginRequest.getEmail(), loginRequest.getPassword())!=null){
+                EmployeeEntity entity = employeeRepository.checkPassword(loginRequest.getEmail(), loginRequest.getPassword());
+                return employeeMapper.entityToDto(entity);
+            }
+        }
+        return null;
+    }
 
 }
 

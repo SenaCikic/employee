@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.print.Doc;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -22,12 +23,9 @@ public class Employee implements Serializable {
 
     private String password;
 
-//    private byte[] avatar;
-
     private String phone;
-
-    private double hoursActive;
 
     private Long docStoreId;
 
+    private String role;
 }

@@ -27,4 +27,5 @@ public interface EmployeeService {
 
     DocStore getAvatar(Long id);
 
+    Employee login(LoginRequest loginRequest);
 }

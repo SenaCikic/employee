@@ -15,4 +15,7 @@ public interface EmployeeRepository extends JpaRepository<EmployeeEntity, Long> 
     List<EmployeeEntity> findEmployeesByEmail(@Param("email") String email);
 
     EmployeeEntity getUserByEmail(@Param("email") String email);
+
+    @Query("select e from EmployeeEntity e where e.email =:email and e.password =:password")
+    EmployeeEntity checkPassword(@Param("email") String email, @Param("password") String password);
 }
